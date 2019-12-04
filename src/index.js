@@ -7,15 +7,6 @@ import store from './state/store/index'
 import { BrowserRouter as Router } from 'react-router-dom';
 import {Provider} from 'react-redux';
 
-// const store = createStore(
-//     rootReducer,
-//     {},
-//     compose(
-//       applyMiddleware(thunk),
-//       window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() : f => f
-//     ),   
-// )
-
 ReactDOM.render(
     <Router>
         <Provider store={store}>

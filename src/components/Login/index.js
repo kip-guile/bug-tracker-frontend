@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { NavLink } from 'react-router-dom'
 import axios from 'axios';
+import '../../App.css';
 // import './login.css';
 
 import { Form, Icon, Input, Button, message, Typography, Spin } from 'antd';
@@ -43,6 +44,7 @@ const NormalLoginForm = (props) => {
 
     const { getFieldDecorator } = props.form;
 
+
     const styles2 = {
         width: '30%',
         padding: '2em',
@@ -55,6 +57,7 @@ const NormalLoginForm = (props) => {
             <div>
             <Title level={3}>Sign in</Title>
             </div>
+      
       <Form onSubmit={handleSubmit} className="login-form">
         <Form.Item>
           {getFieldDecorator('email', {
@@ -77,12 +80,14 @@ const NormalLoginForm = (props) => {
             />,
           )}
         </Form.Item>
+
         <Form.Item>
             <div>
           <a className="login-form-forgot" href="*">
             Forgot password?
           </a>
           </div>
+          
           <Button type="primary" htmlType="submit" className="login-form-button">
             Log in
           </Button>

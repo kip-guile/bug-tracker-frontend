@@ -2,35 +2,8 @@ import React, {useState, useCallback} from 'react'
 import { Table, Input, Button, Icon } from 'antd';
 import Highlighter from 'react-highlight-words';
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'Joe Black',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    name: 'Jim Green',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  },
-  {
-    key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-  },
-];
-
-
-const ProjectList = () => {
+const ProjectList = (projects) => {
+    console.log(projects)
     const [searchText, setSeacrhText] = useState('')
     const [searchedColumn, setSearchedColumn] = useState('')
     const [searchInput, setSearchInput] = useState(null)
@@ -103,29 +76,51 @@ const ProjectList = () => {
 
     const columns = [
         {
-          title: 'Name',
-          dataIndex: 'name',
-          key: 'name',
-          width: '30%',
-          ...getColumnSearchProps('name'),
+          title: 'Title',
+          dataIndex: 'title',
+          key: 'title',
+          width: '13%',
+          ...getColumnSearchProps('title'),
         },
         {
-          title: 'Age',
-          dataIndex: 'age',
-          key: 'age',
-          width: '20%',
-          ...getColumnSearchProps('age'),
+          title: 'Frontend',
+          dataIndex: 'frontend',
+          key: 'frontend',
+          width: '13%',
+          ...getColumnSearchProps('frontend'),
         },
         {
-          title: 'Address',
-          dataIndex: 'address',
-          key: 'address',
-          ...getColumnSearchProps('address'),
+          title: 'Backend',
+          dataIndex: 'backend',
+          key: 'backend',
+          width: '13%',
+          ...getColumnSearchProps('backend'),
+        },
+        {
+            title: 'Client',
+            dataIndex: 'client',
+            key: 'client',
+            width: '13%',
+            ...getColumnSearchProps('client'),
+        },
+        {
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
+            width: '13%',
+            ...getColumnSearchProps('description'),
+        },
+        {
+        title: 'Manager',
+        dataIndex: 'managerName',
+        key: 'managerName',
+        width: '13%',
+        ...getColumnSearchProps('managerName'),
         },
     ]
 
     return (
-        <Table columns={columns} dataSource={data} />
+        <Table columns={columns} dataSource={projects.projects} />
     )
 }
 

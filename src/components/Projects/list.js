@@ -3,7 +3,6 @@ import { Table, Input, Button, Icon } from 'antd';
 import Highlighter from 'react-highlight-words';
 
 const ProjectList = (projects) => {
-    console.log(projects)
     const [searchText, setSeacrhText] = useState('')
     const [searchedColumn, setSearchedColumn] = useState('')
     const [searchInput, setSearchInput] = useState(null)

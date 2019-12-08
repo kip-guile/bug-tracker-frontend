@@ -17,8 +17,18 @@ export const getProjects = () => dispatch => {
     AxiosAuth()
     .get('http://localhost:8000/api/projects/')
     .then(res => {
-        debugger
         dispatch({type: types.GET_PROJECTS, payload: res.data})
+    })
+    .catch(err => {
+        console.log(err.message)
+    })
+}
+
+export const getUsers = () => dispatch => {
+    AxiosAuth()
+    .get('http://localhost:8000/api/users/')
+    .then(res => {
+        dispatch({type: types.GET_USERS, payload: res.data})
     })
     .catch(err => {
         console.log(err.message)

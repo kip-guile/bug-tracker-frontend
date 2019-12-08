@@ -31,14 +31,11 @@ import {
         if (!err) {
           axios.post(SignUpURL, newUser)
           .then(res => {
-              debugger
-              console.log(res.data.message);
               message.success('Sign up successful', 1.0)
               props.form.resetFields()
               props.history.push('/')
           })
           .catch(error => {
-              debugger
               localStorage.clear();
               alert(error.message);
           })

@@ -10,14 +10,16 @@ const Projects = () => {
     const allProjects = useSelector(state => state.projects)
     const dispatch = useDispatch()
 
+    const withKey = allProjects.map(project => 
+        ({...project, key: project.id,})
+    )
+
     useEffect(() => {
         dispatch(creators.getProjects())
     }, [dispatch])
 
-    console.log(allProjects)
-
     return (
-        <ProjectList projects={allProjects}/>
+        <ProjectList projects={withKey}/>
     )
 }
 

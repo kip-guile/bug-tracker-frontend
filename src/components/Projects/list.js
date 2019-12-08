@@ -1,15 +1,70 @@
 import React, {useState, useCallback} from 'react'
-import { Table, Input, Button, Icon } from 'antd';
+import {useDispatch} from 'react-redux';
+import { Table, Input, Button, Icon, Divider, message } from 'antd';
 import Highlighter from 'react-highlight-words';
+import CreateProject from '../../Modals/addProject'
+import * as creators from '../../state/actionCreators'
+import AxiosAuth from '../../AxiosAuth/AxiosAuth'
 
 const ProjectList = (projects) => {
     const [searchText, setSeacrhText] = useState('')
     const [searchedColumn, setSearchedColumn] = useState('')
     const [searchInput, setSearchInput] = useState(null)
+    const [isVisible, setIsVisible] = useState(false)
+    const [formRef, setFormRef] = useState(null)
+    const [projectId, setProjectId] = useState('')
+
+    const dispatch = useDispatch()
+
+    const showModal = (id) => {
+        setProjectId(id)
+        setIsVisible(true)
+    }
+  
+    const handleCancel = () => {
+        setIsVisible(false)
+    }
 
     const tref = useCallback(node => {
         setSearchInput(node)
     }, [])
+
+    const saveFormRef = useCallback(node => {
+        if (node !== null) {
+            setFormRef(node)
+        }
+      }, [])
+
+      const handleCreate = () => {
+        formRef.validateFields((err, values) => {
+            if (err) {
+              return;
+            }
+
+            const manager = parseInt(values.manager[0])
+  
+            const details = {
+              title: values.title,
+              frontend: values.frontend,
+              backend: values.backend,
+              client: values.client,
+              description: values.description,
+              user_id: manager
+          }
+
+          AxiosAuth()
+          .put(`http://localhost:8000/api/projects/${projectId}`, details)
+          .then(res => {
+              formRef.resetFields()
+              message.info('Project Updated')
+              dispatch(creators.getProjects())
+              setIsVisible(false)
+          })
+          .catch(error => {
+              message.error(error.message)
+          })
+        })
+    }
 
     const getColumnSearchProps = dataIndex => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -75,6 +130,13 @@ const ProjectList = (projects) => {
 
     const columns = [
         {
+            title: 'ID',
+            dataIndex: 'id',
+            key: 'id',
+            width: '10%',
+            ...getColumnSearchProps('id'),
+          },
+        {
           title: 'Title',
           dataIndex: 'title',
           key: 'title',
@@ -113,13 +175,35 @@ const ProjectList = (projects) => {
         title: 'Manager',
         dataIndex: 'managerName',
         key: 'managerName',
-        width: '13%',
+        width: '16%',
         ...getColumnSearchProps('managerName'),
         },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (text, record) => (
+              <span>
+                <Button type="primary" 
+                onClick={() => showModal(record.key)}
+                >Edit
+                </Button>
+                <Divider type="vertical" />
+                <Button type="danger">Delete</Button>
+              </span>
+            ),
+          },
     ]
 
     return (
-        <Table columns={columns} dataSource={projects.projects} />
+        <div>
+            <Table columns={columns} dataSource={projects.projects} />
+            <CreateProject
+            ref={saveFormRef}
+            visible={isVisible}
+            onCancel={handleCancel}
+            onCreate={handleCreate}
+            />
+        </div>
     )
 }
 

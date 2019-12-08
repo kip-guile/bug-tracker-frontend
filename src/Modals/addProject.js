@@ -27,8 +27,8 @@ const CreateProject = (props) => {
     return (
       <Modal
           visible={props.visible}
-          title="Create a new project"
-          okText="Create"
+          title="Enter Project details"
+          okText="Done"
           onCancel={props.onCancel}
           onOk={props.onCreate}
         >

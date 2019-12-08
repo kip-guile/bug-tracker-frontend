@@ -1,6 +1,6 @@
 import React, {useState, useCallback} from 'react'
 import {useDispatch} from 'react-redux';
-import { Table, Input, Button, Icon, Divider, message } from 'antd';
+import { Table, Input, Button, Icon, Divider, message, Popconfirm } from 'antd';
 import Highlighter from 'react-highlight-words';
 import CreateProject from '../../Modals/addProject'
 import * as creators from '../../state/actionCreators'
@@ -15,6 +15,26 @@ const ProjectList = (projects) => {
     const [projectId, setProjectId] = useState('')
 
     const dispatch = useDispatch()
+
+    const confirm = (id) => {
+       
+        AxiosAuth()
+        .delete(`http://localhost:8000/api/projects/${id}`)
+        .then(res => {
+            debugger
+            message.info('Project Deleted')
+            dispatch(creators.getProjects())
+        })
+        .catch(error => {
+            debugger
+            message.error(error.message)
+        })
+      }
+      
+      function cancel(e) {
+        console.log(e);
+        message.error('Click on No');
+      }
 
     const showModal = (id) => {
         setProjectId(id)
@@ -188,7 +208,15 @@ const ProjectList = (projects) => {
                 >Edit
                 </Button>
                 <Divider type="vertical" />
+                <Popconfirm
+                    title="Are you sure you want to delete this project?"
+                    onConfirm={() => confirm(record.key)}
+                    onCancel={cancel}
+                    okText="Yes"
+                    cancelText="No"
+                >
                 <Button type="danger">Delete</Button>
+                </Popconfirm>
               </span>
             ),
           },

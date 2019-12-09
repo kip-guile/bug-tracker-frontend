@@ -2,6 +2,8 @@ import React from 'react';
 import { StickyContainer, Sticky } from 'react-sticky';
 import { Tabs } from 'antd';
 import Projects from '../Projects/projects';
+import AllBugs from '../unassignedBugs/unassigned';
+import AssignedBugs from '../assigned/assigned';
 
 const { TabPane } = Tabs;
 
@@ -32,15 +34,15 @@ export default function Welcome (props) {
             </div>}
         </TabPane>
 
-        <TabPane tab="Unassigned Bugs" key="2">
+        <TabPane tab="Assigned Bugs" key="2">
         {<div>
-             Assig buug   
+          <AssignedBugs/>
         </div>}
         </TabPane>
 
-        <TabPane tab="Assigned Bugs" key="3">
+        <TabPane tab="All Bugs" key="3">
         {<div>
-         Major major buggugug
+          <AllBugs/>
         </div>}
         </TabPane>
         </Tabs>

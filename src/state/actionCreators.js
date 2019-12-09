@@ -34,3 +34,25 @@ export const getUsers = () => dispatch => {
         console.log(err.message)
     })
 }
+
+export const getBugs = () => dispatch => {
+    AxiosAuth()
+    .get('http://localhost:8000/api/unassigned')
+    .then(res => {
+        dispatch({type: types.GET_ALL_BUGS, payload: res.data})
+    })
+    .catch(err => {
+        console.log(err.message)
+    })
+}
+
+export const getAssignedBugs = () => dispatch => {
+    AxiosAuth()
+    .get('http://localhost:8000/api/bugs')
+    .then(res => {
+        dispatch({type: types.GET_ASSIGNED_BUGS, payload: res.data})
+    })
+    .catch(err => {
+        console.log(err.message)
+    })
+}

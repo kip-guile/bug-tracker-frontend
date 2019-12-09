@@ -1,41 +1,23 @@
 import React, {useState, useCallback} from 'react'
 import {useDispatch} from 'react-redux';
-import { Table, Input, Button, Icon, Divider, message, Popconfirm } from 'antd';
+import { Table, Input, Button, Icon, message, Tag } from 'antd';
 import Highlighter from 'react-highlight-words';
-import CreateProject from '../../Modals/addProject'
-import * as creators from '../../state/actionCreators'
+import AssignBug from '../../Modals/assignBug'
 import AxiosAuth from '../../AxiosAuth/AxiosAuth'
+import * as creators from '../../state/actionCreators'
 
-const ProjectList = (projects) => {
+const UnassignedBugs = (projects) => {
     const [searchText, setSeacrhText] = useState('')
     const [searchedColumn, setSearchedColumn] = useState('')
     const [searchInput, setSearchInput] = useState(null)
     const [isVisible, setIsVisible] = useState(false)
     const [formRef, setFormRef] = useState(null)
-    const [projectId, setProjectId] = useState('')
+    const [bugKey, setBugKey] = useState('')
 
     const dispatch = useDispatch()
 
-    const confirm = (id) => {
-       
-        AxiosAuth()
-        .delete(`http://localhost:8000/api/projects/${id}`)
-        .then(res => {
-            message.info('Project Deleted')
-            dispatch(creators.getProjects())
-        })
-        .catch(error => {
-            message.error(error.message)
-        })
-      }
-      
-      function cancel(e) {
-        console.log(e);
-        message.error('Click on No');
-      }
-
     const showModal = (id) => {
-        setProjectId(id)
+        setBugKey(id)
         setIsVisible(true)
     }
   
@@ -43,44 +25,39 @@ const ProjectList = (projects) => {
         setIsVisible(false)
     }
 
-    const tref = useCallback(node => {
-        setSearchInput(node)
-    }, [])
-
     const saveFormRef = useCallback(node => {
         if (node !== null) {
             setFormRef(node)
         }
       }, [])
 
-      const handleCreate = () => {
+    const tref = useCallback(node => {
+        setSearchInput(node)
+    }, [])
+
+    const handleCreate = () => {
         formRef.validateFields((err, values) => {
             if (err) {
               return;
             }
+            const dev = parseInt(values.developer)
 
-            const manager = parseInt(values.manager[0])
-  
             const details = {
-              title: values.title,
-              frontend: values.frontend,
-              backend: values.backend,
-              client: values.client,
-              description: values.description,
-              user_id: manager
-          }
+                user_id: dev,
+                bug_id: bugKey
+            }
 
-          AxiosAuth()
-          .put(`http://localhost:8000/api/projects/${projectId}`, details)
-          .then(res => {
-              formRef.resetFields()
-              message.info('Project Updated')
-              dispatch(creators.getProjects())
-              setIsVisible(false)
-          })
-          .catch(error => {
-              message.error(error.message)
-          })
+            AxiosAuth()
+            .post('http://localhost:8000/api/unassigned', details)
+            .then(res => {
+                formRef.resetFields()
+                message.info('Project Assigned')
+                dispatch(creators.getBugs())
+                setIsVisible(false)
+            })
+            .catch(error => {
+                message.error(error.message)
+            }) 
         })
     }
 
@@ -147,74 +124,77 @@ const ProjectList = (projects) => {
     }
 
     const columns = [
-        // {
-        //     title: 'ID',
-        //     dataIndex: 'id',
-        //     key: 'id',
-        //     width: '10%',
-        //     ...getColumnSearchProps('id'),
-        //   },
         {
           title: 'Title',
-          dataIndex: 'title',
-          key: 'title',
+          dataIndex: 'bug_title',
+          key: 'bug_title',
           width: '13%',
           ...getColumnSearchProps('title'),
         },
         {
-          title: 'Frontend',
-          dataIndex: 'frontend',
-          key: 'frontend',
+          title: 'Description',
+          dataIndex: 'description',
+          key: 'description',
           width: '13%',
-          ...getColumnSearchProps('frontend'),
+          ...getColumnSearchProps('description'),
         },
         {
-          title: 'Backend',
-          dataIndex: 'backend',
-          key: 'backend',
+          title: 'Severity',
+          dataIndex: 'severity',
+          key: 'severity',
           width: '13%',
-          ...getColumnSearchProps('backend'),
+          ...getColumnSearchProps('severity'),
+          render: severity => (
+            <span>
+                  <Tag color="volcano" key={severity}>
+                    {severity.toUpperCase()}
+                  </Tag>
+            </span>
+          ),
         },
         {
-            title: 'Client',
-            dataIndex: 'client',
-            key: 'client',
+            title: 'Date Reported',
+            dataIndex: 'date_reported',
+            key: 'date_reported',
             width: '13%',
-            ...getColumnSearchProps('client'),
+            ...getColumnSearchProps('date_reported'),
         },
         {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
             width: '13%',
-            ...getColumnSearchProps('description'),
+            ...getColumnSearchProps('status'),
+            render: status => (
+              <span>
+                    <Tag color="orange" key={status}>
+                      {status.toUpperCase()}
+                    </Tag>
+              </span>
+            ),
         },
         {
-        title: 'Manager',
-        dataIndex: 'managerName',
-        key: 'managerName',
+        title: 'Project',
+        dataIndex: 'project_title',
+        key: 'project_title',
         width: '16%',
-        ...getColumnSearchProps('managerName'),
+        ...getColumnSearchProps('project'),
         },
         {
             title: 'Action',
             key: 'action',
             render: (text, record) => (
+              text.status === 'Assigned' ?
               <span>
-                <Button type="primary" 
+              <Button type="link"
+              >Assigned
+              </Button>
+              </span> :
+              <span>
+                <Button type="link" 
                 onClick={() => showModal(record.key)}
-                >Edit
+                >Assign Bug
                 </Button>
-                <Divider type="vertical" />
-                <Popconfirm
-                    title="Are you sure you want to delete this project?"
-                    onConfirm={() => confirm(record.key)}
-                    onCancel={cancel}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                <Button type="danger">Delete</Button>
-                </Popconfirm>
               </span>
             ),
           },
@@ -222,15 +202,14 @@ const ProjectList = (projects) => {
 
     return (
         <div>
-            <Table columns={columns} dataSource={projects.projects} pagination={{ pageSize: 6 }}/>
-            <CreateProject
+            <Table columns={columns} dataSource={projects.projects} />
+            <AssignBug
             ref={saveFormRef}
             visible={isVisible}
             onCancel={handleCancel}
-            onCreate={handleCreate}
-            />
+            onCreate={handleCreate}/>
         </div>
     )
 }
 
-export default ProjectList
+export default UnassignedBugs

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SideHeader = () => {
+const SideHeader = (props) => {
 
 
     return (

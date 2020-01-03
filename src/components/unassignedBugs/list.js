@@ -53,6 +53,7 @@ const UnassignedBugs = (projects) => {
                 formRef.resetFields()
                 message.info('Project Assigned')
                 dispatch(creators.getBugs())
+                dispatch(creators.getAssignedBugs())
                 setIsVisible(false)
             })
             .catch(error => {
